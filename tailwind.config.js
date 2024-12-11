@@ -16,7 +16,7 @@ module.exports = {
         tc_gray: '#798086',
         tc_rose: '#B79FAD',
         tc_pink: '#D4AFCD',
-        tc_scrollbar: '#124e42',
+        tc_scrollbar: '#273469',
         tc_background: '#30343F',
         tc_white: '#FAFAFF',
         tc_blue_600: '#273469',
