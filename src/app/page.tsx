@@ -2,12 +2,13 @@
 
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { faker } from "@faker-js/faker";
-import Head from "next/head";
+import CardBlog from "@/modules/home/cardBlog";
 
 interface Item {
-  id: string; // Changed to string for unique id generation
+  id: string;
   date: string;
   title: string;
+  img: string;
 }
 
 interface GroupedItems {
@@ -15,11 +16,27 @@ interface GroupedItems {
   items: Item[];
 }
 
+// const generateFakeData = (count: number): Item[] => {
+//   return Array.from({ length: count }, () => ({
+//     id: faker.string.uuid(),
+//     date: faker.date.recent(10).toISOString().split("T")[0],
+//     title: faker.lorem.words(3),
+//     img: "images/1.jpg",
+//   }));
+// };
 const generateFakeData = (count: number): Item[] => {
+  const uniqueDates = Array.from({ length: 3 }, () => {
+    const randomDays = Math.floor(Math.random() * 60) - 30;
+    const date = new Date();
+    date.setDate(date.getDate() + randomDays);
+    return date.toISOString().split("T")[0];
+  });
+
   return Array.from({ length: count }, () => ({
-    id: faker.string.uuid(), // Use faker.string.uuid for unique id
-    date: faker.date.recent(10).toISOString().split("T")[0],
+    id: `${Date.now()}-${Math.random()}`,
+    date: uniqueDates[Math.floor(Math.random() * uniqueDates.length)],
     title: faker.lorem.words(3),
+    img: "images/1.jpg",
   }));
 };
 
@@ -29,7 +46,6 @@ const groupByDate = (items: Item[]): GroupedItems[] => {
     acc[item.date].push(item);
     return acc;
   }, {} as Record<string, Item[]>);
-
   return Object.entries(grouped).map(([date, items]) => ({ date, items }));
 };
 
@@ -85,7 +101,6 @@ const HomePage = () => {
       listRef.current.scrollTop = scrollPosition;
     }
   }, [scrollPosition]);
-  console.log("groupedItems", groupedItems);
   return (
     <>
       <div className="relative">
@@ -104,20 +119,10 @@ const HomePage = () => {
                 <p className="">{group.date}</p>
               </div>
               {group.items.map((item) => (
-                <div
-                  key={item.id}
-                  className="p-4 w-full border-b cursor-pointer"
-                  onClick={() => {
-                    // Navigate to item details
-                    console.log("Navigated to:", item);
-                  }}
-                >
-                  {item.title}
-                </div>
+                <CardBlog item={item} key={item.id} />
               ))}
             </div>
           ))}
-
           {isLoading && <div className="p-4 text-center">Loading...</div>}
         </div>
       </div>
