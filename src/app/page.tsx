@@ -1,101 +1,137 @@
-import Image from "next/image";
+"use client";
 
-export default function Home() {
-  return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
+import React, { useState, useEffect, useRef, useCallback } from "react";
+import { faker } from "@faker-js/faker";
+import Head from "next/head";
 
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:min-w-44"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
-        </div>
-      </main>
-      <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
-      </footer>
-    </div>
-  );
+interface Item {
+  id: string; // Changed to string for unique id generation
+  date: string;
+  title: string;
 }
+
+interface GroupedItems {
+  date: string;
+  items: Item[];
+}
+
+const generateFakeData = (count: number): Item[] => {
+  return Array.from({ length: count }, () => ({
+    id: faker.string.uuid(), // Use faker.string.uuid for unique id
+    date: faker.date.recent(10).toISOString().split("T")[0],
+    title: faker.lorem.words(3),
+  }));
+};
+
+const groupByDate = (items: Item[]): GroupedItems[] => {
+  const grouped = items.reduce((acc, item) => {
+    acc[item.date] = acc[item.date] || [];
+    acc[item.date].push(item);
+    return acc;
+  }, {} as Record<string, Item[]>);
+
+  return Object.entries(grouped).map(([date, items]) => ({ date, items }));
+};
+
+const HomePage = () => {
+  const [items, setItems] = useState<Item[]>([]);
+  const [isLoading, setIsLoading] = useState(false);
+  const [currentDate, setCurrentDate] = useState<string>("");
+  const [scrollPosition, setScrollPosition] = useState(0);
+  const listRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    // Load initial items on mount
+    const initialItems = generateFakeData(20);
+    setItems(initialItems);
+  }, []);
+
+  const groupedItems = groupByDate(items);
+
+  const loadMoreItems = useCallback(() => {
+    setIsLoading(true);
+    setTimeout(() => {
+      const newItems = generateFakeData(20);
+      setItems((prev) => [...prev, ...newItems]);
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+
+  const handleScroll = useCallback(() => {
+    if (!listRef.current) return;
+    const scrollTop = listRef.current.scrollTop;
+    setScrollPosition(scrollTop);
+
+    const dateDivs =
+      listRef.current.querySelectorAll<HTMLDivElement>("[data-date]");
+    for (const dateDiv of Array.from(dateDivs)) {
+      const rect = dateDiv.getBoundingClientRect();
+      if (rect.top <= 60 && rect.bottom > 60) {
+        setCurrentDate(dateDiv.dataset.date || "");
+        break;
+      }
+    }
+
+    if (
+      listRef.current.scrollHeight - scrollTop - listRef.current.clientHeight <
+        100 &&
+      !isLoading
+    ) {
+      loadMoreItems();
+    }
+  }, [isLoading, loadMoreItems]);
+
+  useEffect(() => {
+    if (listRef.current) {
+      listRef.current.scrollTop = scrollPosition;
+    }
+  }, [scrollPosition]);
+  console.log("groupedItems", groupedItems);
+  return (
+    <>
+      {/* <Head>
+        <title>Infinite Scroll with Fixed Date</title>
+      </Head> */}
+      <div className="relative">
+        {/* Fixed Banner */}
+        <div className="fixed top-0 left-0 w-full flex flex-col h-16 bg-blue-500 text-white items-center justify-center z-10">
+          <div className="w-full flex flex-col items-center">
+            <p className="text-base font-semibold">ایونت ها</p>
+            <input placeholder="جستجو" type="text" className="w-full" />
+          </div>
+        </div>
+
+        {/* Scrollable List */}
+        <div
+          className="pt-20 overflow-y-auto h-screen"
+          ref={listRef}
+          onScroll={handleScroll}
+        >
+          {groupedItems.map((group) => (
+            <div key={group.date} data-date={group.date} className="mb-4">
+              <div className="sticky top-16 bg-white z-10 p-2 shadow-md border-b">
+                {group.date}
+              </div>
+              {group.items.map((item) => (
+                <div
+                  key={item.id}
+                  className="p-4 border-b cursor-pointer"
+                  onClick={() => {
+                    // Navigate to item details
+                    console.log("Navigated to:", item);
+                  }}
+                >
+                  {item.title}
+                </div>
+              ))}
+            </div>
+          ))}
+
+          {isLoading && <div className="p-4 text-center">Loading...</div>}
+        </div>
+      </div>
+    </>
+  );
+};
+
+export default HomePage;
