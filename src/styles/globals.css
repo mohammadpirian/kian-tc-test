@@ -1,0 +1,59 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@font-face {
+  font-family: Yekan;
+  font-weight: 300;
+  src: url("../assets/fonts/yekanBakh-Light.ttf");
+}
+@font-face {
+  font-family: Yekan;
+  font-weight: 400;
+  src: url("../assets/fonts/YekanBakh-Regular.ttf");
+}
+@font-face {
+  font-family: Yekan;
+  font-weight: 600;
+  src: url("../assets/fonts/YekanBakh-SemiBold.ttf");
+}
+@font-face {
+  font-family: Yekan;
+  font-weight: 700;
+  src: url("../assets/fonts/YekanBakh-Bold.ttf");
+}
+
+body {
+  color: #fafaff;
+  font-family: Arial, Helvetica, sans-serif;
+  font-family: yekan;
+  @apply bg-tc_background;
+}
+
+body * {
+  direction: rtl;
+  text-align: right;
+}
+body::-webkit-scrollbar-track {
+  @apply bg-white;
+}
+
+body::-webkit-scrollbar {
+  @apply w-1.5 bg-transparent;
+}
+
+body::-webkit-scrollbar-thumb {
+  @apply bg-tc_scrollbar rounded-md;
+}
+
+.listContainer::-webkit-scrollbar-track {
+  @apply bg-white;
+}
+
+.listContainer::-webkit-scrollbar {
+  @apply w-1.5 h-1.5 bg-transparent;
+}
+
+.listContainer::-webkit-scrollbar-thumb {
+  @apply bg-tc_scrollbar rounded-md;
+}
