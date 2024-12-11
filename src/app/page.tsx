@@ -88,13 +88,7 @@ const HomePage = () => {
   console.log("groupedItems", groupedItems);
   return (
     <>
-      {/* <Head>
-        <title>Infinite Scroll with Fixed Date</title>
-      </Head> */}
       <div className="relative">
-        {/* Fixed Banner */}
-
-        {/* Scrollable List */}
         <div
           className="pt-44 overflow-y-auto h-screen listContainer"
           ref={listRef}
