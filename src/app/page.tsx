@@ -105,7 +105,7 @@ const HomePage = () => {
     <>
       <div className="relative">
         <div
-          className="pt-44 overflow-y-auto h-screen listContainer"
+          className="overflow-y-auto h-screen listContainer"
           ref={listRef}
           onScroll={handleScroll}
         >
@@ -115,7 +115,7 @@ const HomePage = () => {
               data-date={group.date}
               className="mb-2 w-full flex flex-col items-center"
             >
-              <div className="sticky top-12 w-48 flex justify-center items-center bg-tc_white opacity-50 text-black z-10 py-2 shadow-md border-b rounded-3xl">
+              <div className="sticky top-4 w-48 flex justify-center items-center bg-tc_white opacity-50 text-black z-10 py-2 shadow-md border-b rounded-3xl">
                 <p className="">{group.date}</p>
               </div>
               {group.items.map((item) => (
