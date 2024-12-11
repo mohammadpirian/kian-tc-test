@@ -5,7 +5,7 @@ const Header = () => {
   const [activeTab, setActiveTab] = useState(0);
 
   return (
-    <div className="fixed top-0 left-0 w-full flex flex-col px-8 py-4 bg-tc_white_700 text-tc_white items-center justify-center z-20">
+    <div className="fixed top-0 left-0 w-full h-52 flex flex-col px-8 py-4 bg-tc_white_700 text-tc_white items-center justify-center z-20">
       <div className="w-full flex flex-col items-center gap-4">
         <p className="text-base font-semibold">ایونت ها</p>
         <input
