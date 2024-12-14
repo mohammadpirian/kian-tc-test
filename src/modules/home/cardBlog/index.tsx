@@ -1,9 +1,10 @@
 import Link from "next/link";
 import React from "react";
+import { Item } from "@/types/home";
 
-const CardBlog = ({ item }) => {
+const CardBlog = ({ item }: { item: Item }) => {
   return (
-    <Link className="w-full max-w-[720px] h-full" href={`blog/${item?.id}`}>
+    <Link className="w-full max-w-[720px] h-full" href={`/blog/${item?.id}`}>
       <div
         key={item.id}
         className="p-4 w-full border-b border-tc_gray cursor-pointer flex flex-col gap-2"
