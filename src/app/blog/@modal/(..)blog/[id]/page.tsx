@@ -1,4 +1,4 @@
-import Modal from "@/components/Modal";
+// import Modal from "@/components/Modal";
 import Image from "next/image";
 
 export default function BlogModal() {
@@ -12,7 +12,7 @@ export default function BlogModal() {
   return (
     <>
       <Image
-        alt=""
+        alt="teeeeeeeeeeeest"
         src={"https://www.kiantc.com/images/content/Group-620913378.webp"}
         height={600}
         width={600}
